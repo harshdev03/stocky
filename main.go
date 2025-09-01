@@ -28,6 +28,7 @@ type Stock struct {
 }
 
 func main() {
+	// load .env
 	_ = godotenv.Load()
 
 	apiKey := os.Getenv("RAPIDAPI_KEY")
@@ -36,15 +37,18 @@ func main() {
 		return
 	}
 
+	// check args
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a stock name: ")
 		fmt.Println("Example: go run main.go \"TATAMOTORS\"")
 		return
 	}
 
+	// build url
 	stockName := strings.Join(os.Args[1:], " ")
 	url := fmt.Sprintf("https://indian-stock-exchange-api2.p.rapidapi.com/stock?name=%s", stockName)
 
+	// request
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("x-rapidapi-key", apiKey)
 	req.Header.Add("x-rapidapi-host", "indian-stock-exchange-api2.p.rapidapi.com")
@@ -58,6 +62,9 @@ func main() {
 
 	body, _ := io.ReadAll(res.Body)
 
+	// debug: print raw response (uncomment if needed)
+	// fmt.Println("Raw Response:", string(body))
+
 	var stock Stock
 	err = json.Unmarshal(body, &stock)
 	if err != nil {
@@ -66,6 +73,7 @@ func main() {
 		return
 	}
 
+	// show clean output
 	fmt.Printf("Symbol: %s\n", stock.Symbol)
 	fmt.Printf("Open: %.2f\n", stock.Open)
 	fmt.Printf("High: %.2f\n", stock.DayHigh)

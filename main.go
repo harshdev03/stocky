@@ -12,20 +12,23 @@ import (
 )
 
 type Stock struct {
-	Name   string  `json:"name"`
-	Price  float64 `json:"price,string"`
-	Open   float64 `json:"open,string"`
-	High   float64 `json:"high,string"`
-	Low    float64 `json:"low,string"`
-	Volume int64   `json:"volume,string"`
+	Symbol           string  `json:"symbol"`
+	Open             float64 `json:"open"`
+	DayHigh          float64 `json:"day_high"`
+	DayLow           float64 `json:"day_low"`
+	PreviousClose    float64 `json:"previous_close"`
+	LastTradingPrice float64 `json:"last_trading_price"`
+	LowPriceRange    float64 `json:"lowPriceRange"`
+	HighPriceRange   float64 `json:"highPriceRange"`
+	Volume           int64   `json:"volume"`
+	DayChange        float64 `json:"day_change"`
+	DayChangePercent float64 `json:"day_change_percent"`
+	TotalBuyQty      int64   `json:"totalBuyQty"`
+	TotalSellQty     int64   `json:"totalSellQty"`
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Error loading .env file:", err)
-		return
-	}
+	_ = godotenv.Load()
 
 	apiKey := os.Getenv("RAPIDAPI_KEY")
 	if apiKey == "" {
@@ -35,7 +38,7 @@ func main() {
 
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a stock name: ")
-		fmt.Println("Example: go run main.go \"Tata Steel\"")
+		fmt.Println("Example: go run main.go \"TATAMOTORS\"")
 		return
 	}
 
@@ -43,7 +46,6 @@ func main() {
 	url := fmt.Sprintf("https://indian-stock-exchange-api2.p.rapidapi.com/stock?name=%s", stockName)
 
 	req, _ := http.NewRequest("GET", url, nil)
-
 	req.Header.Add("x-rapidapi-key", apiKey)
 	req.Header.Add("x-rapidapi-host", "indian-stock-exchange-api2.p.rapidapi.com")
 
@@ -64,10 +66,17 @@ func main() {
 		return
 	}
 
-	fmt.Printf("\n📊 Stock: %s\n", stock.Name)
-	fmt.Printf("💵 Price: %.2f\n", stock.Price)
-	fmt.Printf("💰 Open: %.2f\n", stock.Open)
-	fmt.Printf("📈 High: %.2f\n", stock.High)
-	fmt.Printf("📉 Low: %.2f\n", stock.Low)
-	fmt.Printf("🔄 Volume: %d\n\n", stock.Volume)
+	fmt.Printf("Symbol: %s\n", stock.Symbol)
+	fmt.Printf("Open: %.2f\n", stock.Open)
+	fmt.Printf("High: %.2f\n", stock.DayHigh)
+	fmt.Printf("Low: %.2f\n", stock.DayLow)
+	fmt.Printf("Previous Close: %.2f\n", stock.PreviousClose)
+	fmt.Printf("Last Price: %.2f\n", stock.LastTradingPrice)
+	fmt.Printf("52W Low: %.2f\n", stock.LowPriceRange)
+	fmt.Printf("52W High: %.2f\n", stock.HighPriceRange)
+	fmt.Printf("Volume: %d\n", stock.Volume)
+	fmt.Printf("Change: %.2f\n", stock.DayChange)
+	fmt.Printf("Change %%: %.2f\n", stock.DayChangePercent)
+	fmt.Printf("Buy Qty: %d\n", stock.TotalBuyQty)
+	fmt.Printf("Sell Qty: %d\n", stock.TotalSellQty)
 }

@@ -42,8 +42,8 @@ run directly:
 ```
 stocky "Tata Steel"
 stocky "Reliance"
-stocky TCS
-stocky INFY
+stocky "TCS"
+stocky "INFY"
 ```
 
 ## requirements

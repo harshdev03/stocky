@@ -46,12 +46,12 @@ func main() {
 
 	// build url
 	stockName := strings.Join(os.Args[1:], " ")
-	url := fmt.Sprintf("https://indian-stock-exchange-api2.p.rapidapi.com/stock?name=%s", stockName)
+	url := fmt.Sprintf("https://indian-stock-exchange-api1.p.rapidapi.com/stock_price/?symbol=%s", stockName)
 
 	// request
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("x-rapidapi-key", apiKey)
-	req.Header.Add("x-rapidapi-host", "indian-stock-exchange-api2.p.rapidapi.com")
+	req.Header.Add("x-rapidapi-host", "indian-stock-exchange-api1.p.rapidapi.com")
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

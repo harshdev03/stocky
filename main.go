@@ -6,9 +6,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"strings"
-
-	"github.com/joho/godotenv"
 )
 
 type Stock struct {
@@ -28,63 +25,35 @@ type Stock struct {
 }
 
 func main() {
-	// load .env
-	_ = godotenv.Load()
-
-	apiKey := os.Getenv("RAPIDAPI_KEY")
-	if apiKey == "" {
-		fmt.Println("API key not found. Please set RAPIDAPI_KEY in .env file.")
-		return
-	}
-
-	// check args
 	if len(os.Args) < 2 {
-		fmt.Println("Please provide a stock name: ")
-		fmt.Println("Example: go run main.go \"TATAMOTORS\"")
+		fmt.Println("Usage: go run main.go <STOCK_SYMBOL>")
 		return
 	}
 
-	// build url
-	stockName := strings.Join(os.Args[1:], " ")
-	url := fmt.Sprintf("https://indian-stock-exchange-api1.p.rapidapi.com/stock_price/?symbol=%s", stockName)
+	stockSymbol := os.Args[1]
+	url := fmt.Sprintf("https://indian-stock-exchange-api1.p.rapidapi.com/stock_price/?symbol=%s", stockSymbol)
 
-	// request
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("x-rapidapi-key", apiKey)
+	req.Header.Add("x-rapidapi-key", "34659b738bmsheb9bb0c92c2808dp1f71f2jsn082f88e3e848")
 	req.Header.Add("x-rapidapi-host", "indian-stock-exchange-api1.p.rapidapi.com")
 
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		fmt.Println("Error fetching data:", err)
-		return
-	}
+	res, _ := http.DefaultClient.Do(req)
 	defer res.Body.Close()
-
 	body, _ := io.ReadAll(res.Body)
 
-	// debug: print raw response (uncomment if needed)
-	// fmt.Println("Raw Response:", string(body))
-
 	var stock Stock
-	err = json.Unmarshal(body, &stock)
-	if err != nil {
-		fmt.Println("Error parsing JSON:", err)
-		fmt.Println("Response:", string(body))
-		return
-	}
+	json.Unmarshal(body, &stock)
 
-	// show clean output
-	fmt.Printf("Symbol: %s\n", stock.Symbol)
+	fmt.Printf("Stock: %s\n", stock.Symbol)
+	fmt.Printf("Current Price: %.2f\n", stock.LastTradingPrice)
 	fmt.Printf("Open: %.2f\n", stock.Open)
-	fmt.Printf("High: %.2f\n", stock.DayHigh)
-	fmt.Printf("Low: %.2f\n", stock.DayLow)
+	fmt.Printf("Day High: %.2f\n", stock.DayHigh)
+	fmt.Printf("Day Low: %.2f\n", stock.DayLow)
 	fmt.Printf("Previous Close: %.2f\n", stock.PreviousClose)
-	fmt.Printf("Last Price: %.2f\n", stock.LastTradingPrice)
-	fmt.Printf("52W Low: %.2f\n", stock.LowPriceRange)
+	fmt.Printf("Day Change: %.2f (%.2f%%)\n", stock.DayChange, stock.DayChangePercent)
 	fmt.Printf("52W High: %.2f\n", stock.HighPriceRange)
+	fmt.Printf("52W Low: %.2f\n", stock.LowPriceRange)
 	fmt.Printf("Volume: %d\n", stock.Volume)
-	fmt.Printf("Change: %.2f\n", stock.DayChange)
-	fmt.Printf("Change %%: %.2f\n", stock.DayChangePercent)
 	fmt.Printf("Buy Qty: %d\n", stock.TotalBuyQty)
 	fmt.Printf("Sell Qty: %d\n", stock.TotalSellQty)
 }

@@ -34,7 +34,7 @@ func main() {
 	url := fmt.Sprintf("https://indian-stock-exchange-api1.p.rapidapi.com/stock_price/?symbol=%s", stockSymbol)
 
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("x-rapidapi-key", "34659b738bmsheb9bb0c92c2808dp1f71f2jsn082f88e3e848")
+	req.Header.Add("x-rapidapi-key", "your_api_key")
 	req.Header.Add("x-rapidapi-host", "indian-stock-exchange-api1.p.rapidapi.com")
 
 	res, _ := http.DefaultClient.Do(req)
